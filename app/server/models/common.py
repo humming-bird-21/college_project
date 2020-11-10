@@ -17,3 +17,9 @@ class StudentStatus(str, Enum):
     active = "active"
     dormant = "dormant"
     completed = "completed"
+    deleted = "deleted"
+
+
+class RecordStatus(str, Enum):
+    active = "active"
+    deleted = "deleted"

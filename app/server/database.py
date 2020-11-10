@@ -2,8 +2,10 @@ import motor.motor_asyncio
 from bson.objectid import ObjectId
 from fastapi.encoders import jsonable_encoder
 from server.models.student import StudentDB
-from server.utils.support import History
+from server.models.common import RecordStatus
 from datetime import datetime
+
+from server.utils.support import History
 
 MONGO_DETAILS = "mongodb://root:example@localhost:27017"
 
@@ -13,22 +15,10 @@ database = client.students
 
 student_collection = database.get_collection("students_collection")
 
-
-def student_helper(student) -> dict:
-    return {
-        "id": str(student["_id"]),
-        "fullname": student["fullname"],
-        "email": student["email"],
-        "course_of_study": student["course_of_study"],
-        "year": student["year"],
-        "GPA": student["gpa"],
-    }
-
-
 # Retrieve all students present in the database
-async def retrieve_students():
+async def retrieve_students(status: RecordStatus):
     students = []
-    async for student in student_collection.find():
+    async for student in student_collection.find({"record": status}):
         students.append(student)
     return students
 
@@ -69,7 +59,12 @@ async def update_student(id: str, data: dict):
 
 # Delete a student from the database
 async def delete_student(id: str):
-    student = await student_collection.find_one({"_id": ObjectId(id)})
+    student = await student_collection.find_one(
+        {"id": id, "record": RecordStatus.active}
+    )
     if student:
-        await student_collection.delete_one({"_id": ObjectId(id)})
-        return True
+        result = await student_collection.update_one(
+            {"id": id}, {"$set": {"record": RecordStatus.deleted}}
+        )
+        return result
+    return False

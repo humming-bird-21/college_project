@@ -16,7 +16,7 @@ from server.models.student_1 import (
     ResponseModel,
     UpdateStudentModel,
 )
-from server.models.common import ResponseModel, Message
+from server.models.common import ResponseModel, Message, RecordStatus
 
 router = APIRouter()
 
@@ -37,11 +37,11 @@ async def add_student_data(student: Student = Body(...)):
 @router.get(
     "/", response_model=List[StudentDB], response_description="Students retrieved"
 )
-async def get_students():
-    students = await retrieve_students()
+async def get_students(status: RecordStatus = RecordStatus.active):
+    students = await retrieve_students(status)
     if students:
         return students
-    raise HTTPException(status_code=status.HTTP_200_OK, detail="No Students present")
+    raise HTTPException(status_code=200, detail="No Students present")
 
 
 @router.get(
@@ -85,9 +85,7 @@ async def update_student_data(id: str, req: UpdateStudent = Body(...)):
 async def delete_student_data(id: str):
     deleted_student = await delete_student(id)
     if deleted_student:
-        return ResponseModel(
-            "Student with ID: {} removed".format(id), "Student deleted successfully"
-        )
-    return ErrorResponseModel(
-        "An error occurred", 404, "Student with id {0} doesn't exist".format(id)
+        return Message(message=f"Student {id} removed")
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail=f"Student {id} doesn't exist"
     )

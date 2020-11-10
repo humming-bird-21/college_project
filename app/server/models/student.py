@@ -3,7 +3,7 @@ import sys
 from uuid import UUID, uuid4
 from datetime import datetime, date
 from typing import Optional, List
-from .common import StudentStatus
+from .common import StudentStatus, RecordStatus
 from ..utils.support import History
 
 
@@ -114,6 +114,9 @@ class Student(BaseModel):
 class StudentDB(Student):
     id: UUID = Field(default_factory=uuid4)
     timestamp: datetime = Field(default_factory=datetime.utcnow)
+    record: RecordStatus = Field(
+        StudentStatus.active, description="Student record status"
+    )
     history: Optional[List[History]] = Field(
         [], description="Student Update History Series"
     )
