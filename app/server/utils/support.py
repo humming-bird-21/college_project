@@ -1,6 +1,12 @@
 import datetime as dt
+from datetime import datetime
+from typing import Optional
+
 from bson import ObjectId
 from uuid import UUID
+
+from pydantic import Field
+from pydantic.main import BaseModel
 
 
 class UTC(dt.tzinfo):
@@ -71,3 +77,8 @@ def object_id_to_uuid(object_id):
             least_sig_bits[4:],
         )
     )
+
+
+class History(BaseModel):
+    update_data: Optional[dict] = Field(None, description="Updated Student data")
+    update_ts: Optional[datetime] = Field(default_factory=datetime.utcnow)

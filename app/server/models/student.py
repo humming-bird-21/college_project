@@ -1,11 +1,10 @@
-from pydantic import BaseModel, EmailStr, Field, PrivateAttr, validator
-from fastapi import Body
+from pydantic import BaseModel, EmailStr, Field
 import sys
 from uuid import UUID, uuid4
 from datetime import datetime, date
 from typing import Optional, List
-from bson.objectid import ObjectId
 from .common import StudentStatus
+from ..utils.support import History
 
 
 class UpdateStudent(BaseModel):
@@ -110,11 +109,6 @@ class Student(BaseModel):
     status: StudentStatus = Field(
         StudentStatus.active, description="status for the student"
     )
-
-
-class History(BaseModel):
-    update_data: Optional[dict] = Field(None, description="Updated Student data")
-    update_ts: Optional[datetime] = Field(default_factory=datetime.utcnow)
 
 
 class StudentDB(Student):

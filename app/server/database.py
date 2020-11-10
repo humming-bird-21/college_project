@@ -1,7 +1,8 @@
 import motor.motor_asyncio
 from bson.objectid import ObjectId
 from fastapi.encoders import jsonable_encoder
-from server.models.student import StudentDB, History
+from server.models.student import StudentDB
+from server.utils.support import History
 from datetime import datetime
 
 MONGO_DETAILS = "mongodb://root:example@localhost:27017"
