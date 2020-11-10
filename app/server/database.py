@@ -1,7 +1,8 @@
 import motor.motor_asyncio
 from bson.objectid import ObjectId
 from fastapi.encoders import jsonable_encoder
-from server.models.student import StudentDB
+from server.models.student import StudentDB, History
+from datetime import datetime
 
 MONGO_DETAILS = "mongodb://root:example@localhost:27017"
 
@@ -50,17 +51,15 @@ async def retrieve_student(id: str) -> dict:
 # Update a student with a matching ID
 async def update_student(id: str, data: dict):
     # Return false if an empty request body is sent.
-
-    if len(data) < 1:
-        return False
     student = await student_collection.find_one({"id": id})
 
     if student:
-        data["id"] = student["id"]
-        data["prn"] = student["prn"]
-        data = jsonable_encoder(StudentDB(**data))
+        for k, v in data.items():
+            student[k] = v
+        student["timestamp"] = datetime.utcnow()
+        student["history"].append(History(update_data=data))
         updated_student = await student_collection.update_one(
-            {"id": id}, {"$set": data}
+            {"id": id}, {"$set": jsonable_encoder(StudentDB(**student))}
         )
         if updated_student:
             return await student_collection.find_one({"id": id})

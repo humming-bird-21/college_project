@@ -29,6 +29,7 @@ router = APIRouter()
 )
 async def add_student_data(student: Student = Body(...)):
     student_response = jsonable_encoder(StudentDB(**student.dict()))
+    print(f"create student => {student_response}")
     created_student = await add_student(student_response)
     return created_student
 
@@ -66,6 +67,11 @@ async def get_student_data(id):
 )
 async def update_student_data(id: str, req: UpdateStudent = Body(...)):
     req = {k: v for k, v in req.dict().items() if v is not None}
+    if len(req) < 1:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={"message": "Update request not valid"},
+        )
     updated_student = await update_student(id, req)
     if updated_student:
         return updated_student
