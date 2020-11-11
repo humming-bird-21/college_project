@@ -15,6 +15,7 @@ client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 database = client.college
 
 student_collection = database.get_collection("students")
+courses_collection = database.get_collection("courses")
 
 # Retrieve all students present in the database
 async def retrieve_students(status: RecordStatus):
@@ -91,3 +92,18 @@ async def delete_student(id: str):
         )
         return result
     return False
+
+
+async def retrieve_subjects():
+    subjects = []
+    async for subject in courses_collection.find():
+        subjects.append(subject)
+    return subjects
+
+
+async def insert_subject(subject: dict):
+    subject = await courses_collection.insert_one(subject)
+    new_subject = await courses_collection.find_one(
+        {"_id": ObjectId(subject.inserted_id)}
+    )
+    return new_subject

@@ -1,18 +1,22 @@
 from pydantic import BaseModel, Field
-
-
-class Subject(BaseModel):
-    name: str = Field(
-        ..., min_length=4, max_length=100, description="Name for the subject"
-    )
-    subject_code: str = Field(
-        ..., min_length=5, max_length=20, description="Unique code for the subject"
-    )
-    max_marks: int = Field(..., gt=0, le=100)
-    min_marks: int = Field(..., gt=0, le=max_marks)
+from typing import List
 
 
 class Course(BaseModel):
     name: str = Field(
         ..., min_length=3, max_length=100, description="Name for the course"
+    )
+    course_code: str = Field(
+        ..., min_length=3, max_length=100, description="Unique Code for the Course"
+    )
+    mandatory_subjects: List[str] = Field(
+        ...,
+        max_length=5,
+        description="List of subjects(codes) mandatory for the course",
+    )
+    optional_subjects: List[str] = Field(
+        ..., max_length=5, description="List of subjects(codes) optional for the course"
+    )
+    max_optional_subjects: int = Field(
+        ..., gt=0, le=10, description="Maximum of optional subjects"
     )
