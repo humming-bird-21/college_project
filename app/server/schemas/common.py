@@ -23,3 +23,7 @@ class StudentStatus(str, Enum):
 class RecordStatus(str, Enum):
     active = "active"
     deleted = "deleted"
+
+
+class ResponseException(BaseModel):
+    detail: str

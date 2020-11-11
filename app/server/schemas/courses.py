@@ -11,11 +11,10 @@ class Course(BaseModel):
     )
     mandatory_subjects: List[str] = Field(
         ...,
-        max_length=5,
         description="List of subjects(codes) mandatory for the course",
     )
     optional_subjects: List[str] = Field(
-        ..., max_length=5, description="List of subjects(codes) optional for the course"
+        ..., description="List of subjects(codes) optional for the course"
     )
     max_optional_subjects: int = Field(
         ..., gt=0, le=10, description="Maximum of optional subjects"
