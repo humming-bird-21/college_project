@@ -38,8 +38,13 @@ def test_create_student():
         "contant_number": "+91-9819882939",
         "email": "user@example.com",
         "status": "active",
+        "record": "active",
         "history": [],
     }
     response = requests.post(f"{SERVER_URL}/student/", data=json.dumps(create_student))
     assert response.status_code == 201
-    # assert StudentDB(response.json())
+    json_response = response.json()
+    for k, v in expected_response.items():
+        assert expected_response[k] == json_response[k]
+    assert json_response["id"]
+    assert json_response["timestamp"]

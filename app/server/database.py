@@ -1,19 +1,20 @@
+from datetime import datetime
+
 import motor.motor_asyncio
 from bson.objectid import ObjectId
 from fastapi.encoders import jsonable_encoder
-from server.models.student import StudentDB
-from server.models.common import RecordStatus
-from datetime import datetime
 
+from server.schemas.common import RecordStatus
+from server.schemas.student import StudentDB
 from server.utils.support import History
 
 MONGO_DETAILS = "mongodb://root:example@localhost:27017"
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 
-database = client.students
+database = client.college
 
-student_collection = database.get_collection("students_collection")
+student_collection = database.get_collection("students")
 
 # Retrieve all students present in the database
 async def retrieve_students(status: RecordStatus):
@@ -21,6 +22,28 @@ async def retrieve_students(status: RecordStatus):
     async for student in student_collection.find({"record": status}):
         students.append(student)
     return students
+
+
+async def find_student_by_first_last_name(student: dict):
+    student_from_db = await student_collection.find_one(
+        {
+            "first_name": student["first_name"],
+            "last_name": student["last_name"],
+            "middle_name": student["middle_name"],
+        }
+    )
+    if student_from_db:
+        return student_from_db
+    return False
+
+
+async def find_student_by_prn(student: dict):
+    student_from_db = await student_collection.find_one(
+        {"prn": student["prn"]},
+    )
+    if student_from_db:
+        return student_from_db
+    return False
 
 
 # Add a new student into to the database

@@ -1,24 +1,32 @@
-from typing import List, Union
+from typing import List
 
 from fastapi import APIRouter, Body, status, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+
 from server.database import (
     add_student,
     delete_student,
     retrieve_student,
     retrieve_students,
     update_student,
+    find_student_by_first_last_name,
+    find_student_by_prn,
 )
-from server.models.student import Student, StudentDB, UpdateStudent
-from server.models.student_1 import (
-    ErrorResponseModel,
-    ResponseModel,
-    UpdateStudentModel,
-)
-from server.models.common import ResponseModel, Message, RecordStatus
+from server.schemas.common import Message, RecordStatus
+from server.schemas.student import Student, StudentDB, UpdateStudent
 
 router = APIRouter()
+
+
+async def precondition_student_to_db(student: Student):
+    student_from_db_name = await find_student_by_first_last_name(student)
+    student_from_db_prn = await find_student_by_prn(student)
+    if student_from_db_name or student_from_db_prn:
+        raise HTTPException(
+            status_code=412,
+            detail="Student with same Name(First,Middle,Last) or PRN already present",
+        )
 
 
 @router.post(
@@ -29,7 +37,7 @@ router = APIRouter()
 )
 async def add_student_data(student: Student = Body(...)):
     student_response = jsonable_encoder(StudentDB(**student.dict()))
-    print(f"create student => {student_response}")
+    await precondition_student_to_db(student_response)
     created_student = await add_student(student_response)
     return created_student
 
@@ -41,7 +49,9 @@ async def get_students(status: RecordStatus = RecordStatus.active):
     students = await retrieve_students(status)
     if students:
         return students
-    raise HTTPException(status_code=200, detail="No Students present")
+    raise HTTPException(
+        status_code=200, detail=f"No Students present with status {status}"
+    )
 
 
 @router.get(
@@ -71,6 +81,12 @@ async def update_student_data(id: str, req: UpdateStudent = Body(...)):
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail={"message": "Update request not valid"},
+        )
+    student_from_db_name = await find_student_by_first_last_name(req)
+    if student_from_db_name:
+        raise HTTPException(
+            status_code=412,
+            detail="Student with same Name(First,Middle,Last) or PRN already present",
         )
     updated_student = await update_student(id, req)
     if updated_student:
