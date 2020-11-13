@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from .routes.student import router as StudentRouter
-from .routes.subjects import router as SubjectsRouter
+from .routes.subject import router as SubjectsRouter
 from .routes.courses import router as CoursesRouter
 
 app = FastAPI()

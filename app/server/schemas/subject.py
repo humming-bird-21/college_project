@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import List, Optional
 
 
 class Subject(BaseModel):
@@ -10,3 +11,11 @@ class Subject(BaseModel):
     )
     max_marks: int = Field(..., gt=0, le=100)
     min_marks: int = Field(..., gt=0, le=100)
+
+
+class UpdateSubject(BaseModel):
+    name: Optional[str] = Field(
+        None, min_length=4, max_length=100, description="Name for the subject"
+    )
+    max_marks: Optional[int] = Field(None, gt=0, le=100)
+    min_marks: Optional[int] = Field(None, gt=0, le=100)

@@ -4,10 +4,15 @@ from fastapi import APIRouter, Body, status, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
-from server.database import retrieve_subjects, insert_subject, subject_collection
+from server.database import (
+    retrieve_subjects,
+    insert_subject,
+    subject_collection,
+    update_subject,
+)
 from server.schemas.common import Message, RecordStatus, ResponseException
 from server.schemas.student import Student, StudentDB, UpdateStudent
-from server.schemas.subjects import Subject
+from server.schemas.subject import Subject, UpdateSubject
 
 router = APIRouter()
 
@@ -39,3 +44,28 @@ async def add_subject(subject: Subject):
     await precondition_subject_by_code(jsonable_encoder(subject))
     added_subject = await insert_subject(jsonable_encoder(subject))
     return added_subject
+
+
+@router.put(
+    "/{subject_code}",
+    response_model=Subject,
+    responses={
+        status.HTTP_412_PRECONDITION_FAILED: {"model": ResponseException},
+        status.HTTP_404_NOT_FOUND: {"model": ResponseException},
+    },
+)
+async def update_subject_data(subject_code: str, req: UpdateSubject = Body(...)):
+    req = {k: v for k, v in req.dict().items() if v is not None}
+    if len(req) < 1:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={"message": "Update request not valid"},
+        )
+
+    updated_subject = await update_subject(subject_code, req)
+    if updated_subject:
+        return updated_subject
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail=f"Subject with id {subject_code} not found",
+    )

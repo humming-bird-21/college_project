@@ -5,7 +5,9 @@ from bson.objectid import ObjectId
 from fastapi.encoders import jsonable_encoder
 
 from server.schemas.common import RecordStatus
+from server.schemas.courses import Course
 from server.schemas.student import StudentDB
+from server.schemas.subject import Subject
 from server.utils.support import History
 
 MONGO_DETAILS = "mongodb://root:example@localhost:27017"
@@ -123,3 +125,29 @@ async def insert_course(course: dict):
         {"_id": ObjectId(course_db.inserted_id)}
     )
     return new_course
+
+
+async def update_subject(id: str, data: dict):
+    subject = await subject_collection.find_one({"subject_code": id})
+    if subject:
+        for k, v in data.items():
+            subject[k] = v
+        updated_subject = await subject_collection.update_one(
+            {"subject_code": id}, {"$set": jsonable_encoder(Subject(**subject))}
+        )
+        if updated_subject:
+            return await subject_collection.find_one({"subject_code": id})
+    return None
+
+
+async def update_course(id: str, data: dict):
+    course = await course_collection.find_one({"course_code": id})
+    if course:
+        for k, v in data.items():
+            course[k] = v
+        updated_course = await course_collection.update_one(
+            {"course_code": id}, {"$set": jsonable_encoder(Course(**course))}
+        )
+        if updated_course:
+            return await course_collection.find_one({"course_code": id})
+    return None
