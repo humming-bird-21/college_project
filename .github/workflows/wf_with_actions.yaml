@@ -4,6 +4,8 @@ jobs:
   transition-jira-issue:
     runs-on: ubuntu-latest
     steps:
+      - name: jira base url
+        run: echo ${{ secrets.JIRA_BASE_URL }}
       - name: Transition issue
         id: transition
         uses: atlassian/gajira-transition@master
