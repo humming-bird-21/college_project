@@ -8,7 +8,7 @@ jobs:
         id: timestamp
         run: |
           echo $(GITHUB_SHA)
-          echo $GITHUB_USERNAME
+          env
           echo $GITHUB_REPOSITORY
           echo ${{ github.event.repo.name}}
           echo ${{ github.event.head}}
