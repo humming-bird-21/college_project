@@ -74,10 +74,10 @@ jobs:
           issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
           transition: 'In Review'
 
-      - name: on-push-transition-to-in-review
-        if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
-        id: on-pull-request-transition-to-in-review
-        uses: atlassian/gajira-transition@master
-        with:
-          issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
-          transition: 'In Review'
+      # - name: on-push-transition-to-in-review
+      #   if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
+      #   id: on-pull-request-transition-to-in-review
+      #   uses: atlassian/gajira-transition@master
+      #   with:
+      #     issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
+      #     transition: 'In Review'
