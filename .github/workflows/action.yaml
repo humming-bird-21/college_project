@@ -1,6 +1,6 @@
 name: Shell Commands
 
-on: [push]
+on: [pull_request_target]
 jobs:
   run-shell-commands:
     runs-on: ubuntu-latest
