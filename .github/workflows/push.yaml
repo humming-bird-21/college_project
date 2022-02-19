@@ -15,14 +15,12 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Find jira-issue for push
-        if: github.event_name == 'push'
         id: jira-issue-push
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ github.event.ref }}
 
       - name: on-push-transition-to-in-progress
-        if: github.event_name == 'push'
         id: on-push-transition-to-in-progress
         uses: atlassian/gajira-transition@master
         with:
@@ -30,7 +28,6 @@ jobs:
           transition: 'In Progress'
 
       - name: Comment on issue
-        if: github.event_name == 'push'
         uses: atlassian/gajira-comment@master
         with:
           issue: ${{ steps.jira-issue-push.outputs.issue }}
