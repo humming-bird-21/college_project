@@ -6,7 +6,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: echo hello world string
-        run: echo "hello world"
+        run: |
+          echo "hello world"
+          ls -lrt
   get-node-details:
     runs-on: ubuntu-latest
     steps:
