@@ -28,7 +28,7 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Find jira-issue for push
-        if: github.event == "push"
+        if: github.event.push
         id: jira-issue-push
         uses: atlassian/gajira-find-issue-key@master
         with:
