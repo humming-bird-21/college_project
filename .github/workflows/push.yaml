@@ -6,7 +6,10 @@ jobs:
     steps:
       - name: timestamp of issue transition
         id: timestamp
-        run: echo $(date)
+        run: |
+          echo ${{ github.event.ref }}
+          echo ${{ github.pull_request.title }}
+          echo ${{ github.event.comment.id }}
       - name: Login
         uses: atlassian/gajira-login@master
         env:
