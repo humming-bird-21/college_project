@@ -7,7 +7,7 @@ jobs:
       - name: timestamp of issue transition
         id: timestamp
         run: |
-          echo ${{ github.event.comment.description }}
+          echo ${{ github.event.ref.description }}
           echo ${{ github.event.comment.title }}
           echo ${{ github.event.comment.id }}
       - name: Login
