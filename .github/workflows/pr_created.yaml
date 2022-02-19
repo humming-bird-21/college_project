@@ -17,7 +17,7 @@ jobs:
         id: jira-issue
         uses: atlassian/gajira-find-issue-key@master
         with:
-          string: ${{ github.event.ref }}
+          string: ${{ github.event.comment.title }}
       - name: Transition issue
         id: transition
         uses: atlassian/gajira-transition@master
