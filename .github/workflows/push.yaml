@@ -1,7 +1,7 @@
 name: Jira issue transition
 on: [push]
 jobs:
-  transition-jira-issue:
+  transition-for-push:
     runs-on: ubuntu-latest
     steps:
       - name: timestamp of issue transition

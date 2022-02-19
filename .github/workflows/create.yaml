@@ -1,7 +1,7 @@
 name: Jira issue transition
 on: [create]
 jobs:
-  transition-jira-issue:
+  transition-for-branch-create:
     runs-on: ubuntu-latest
     steps:
       - name: timestamp of issue transition

@@ -1,7 +1,7 @@
 name: Jira issue transition
 on: [pull_request]
 jobs:
-  transition-jira-issue:
+  transition-for-pull-request:
     runs-on: ubuntu-latest
     steps:
       - name: timestamp of issue transition
