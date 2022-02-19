@@ -9,7 +9,7 @@ jobs:
         run: |
           echo $GITHUB_SHA
           echo $GITHUB_REPOSITORY
-          echo ${{ github.event.repo.name}}
+          echo $GITHUB_ACTOR
           echo ${{ github.event.head}}
           echo ${{ github.event}}
 
