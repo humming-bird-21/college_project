@@ -9,7 +9,6 @@ on:
 jobs:
   pull-request-event:
     runs-on: ubuntu-latest
-    needs: [push-event]
     steps:
       - name: Login
         uses: atlassian/gajira-login@master
