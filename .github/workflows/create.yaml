@@ -1,5 +1,5 @@
 name: Jira issue transition
-on: [push, pull_request, pull_request_review]
+on: [create]
 jobs:
   transition-jira-issue:
     runs-on: ubuntu-latest
@@ -18,14 +18,14 @@ jobs:
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ github.event.ref }}
-      - name: Comment on issue
-        uses: atlassian/gajira-comment@master
-        with:
-          issue: ${{ steps.jira-issue.outputs.issue }}
-          comment: '${{ github.event.pusher.name }} pushed to repository: ${{ steps.jira-issue.outputs.issue }} ${{ github.event.repository.full_name }} branch: ${{ github.event.repository.base }}'
       - name: Transition issue
         id: transition
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.jira-issue.outputs.issue }}
-          transition: 'TO DO'
+          transition: 'In Progress'
+      - name: Comment on issue
+        uses: atlassian/gajira-comment@master
+        with:
+          issue: ${{ steps.jira-issue.outputs.issue }}
+          comment: '${{ github.event.pusher.name }} branch created to repository: ${{ steps.jira-issue.outputs.issue }} ${{ github.event.repository.full_name }} branch: ${{ github.event.repository.base }}'
