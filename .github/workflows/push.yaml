@@ -7,9 +7,9 @@ jobs:
       - name: timestamp of issue transition
         id: timestamp
         run: |
-          echo ${{ github.event.ref }}
-          echo ${{ github.event.actor}}
-          echo ${{ github.event.repo}}
+          echo $GITHUB_SHA
+          echo $GITHUB_USERNAME
+          echo $GITHUB_REPOSITORY
           echo ${{ github.event.repo.name}}
           echo ${{ github.event.head}}
           echo ${{ github.event}}
