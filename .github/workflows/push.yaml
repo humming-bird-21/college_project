@@ -8,8 +8,8 @@ jobs:
         id: timestamp
         run: |
           echo ${{ github.event.ref }}
-          echo ${{ github.pull_request.title }}
-          echo ${{ github.event.comment.id }}
+          echo ${{ github.event.comment }}
+          echo ${{ github.event.commits}}
       - name: Login
         uses: atlassian/gajira-login@master
         env:
