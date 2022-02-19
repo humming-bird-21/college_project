@@ -7,8 +7,7 @@ jobs:
       - name: timestamp of issue transition
         id: timestamp
         run: |
-          echo $(GITHUB_SHA)
-          env
+          echo $GITHUB_SHA
           echo $GITHUB_REPOSITORY
           echo ${{ github.event.repo.name}}
           echo ${{ github.event.head}}
