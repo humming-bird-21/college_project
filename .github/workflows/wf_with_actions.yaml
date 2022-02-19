@@ -1,0 +1,12 @@
+name: Jira issue transition
+on: [push, pull_request, pull_request_review]
+jobs:
+  transition-jira-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: transition jira issue
+        id: transition-jira
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: AUTO-1
+          transition: 'To Do'
