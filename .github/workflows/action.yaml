@@ -8,6 +8,7 @@ jobs:
       - name: echo hello world string
         run: |
           echo "hello world"
+          pwd
           ls -lrt
   get-node-details:
     runs-on: ubuntu-latest
