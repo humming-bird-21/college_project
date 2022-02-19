@@ -16,7 +16,7 @@ jobs:
         uses: atlassian/gajira-comment@master
         with:
           issue: AUTO-1
-          comment: '${{ github.event.pusher.name }} pushed to repository: ${{ github.event.repository.full_name }}'
+          comment: '${{ github.event.pusher.name }} pushed to repository: ${{ github.event.repository.full_name }} branch: ${{ github.event.repository.branch}}'
       - name: Transition issue
         id: transition
         uses: atlassian/gajira-transition@master
