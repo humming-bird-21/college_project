@@ -16,9 +16,8 @@ jobs:
       - name: Find in commit messages
         id: jira-issue
         uses: atlassian/gajira-find-issue-key@master
-        run: echo ${{ github.event.comment.description }}
         with:
-          string: ${{ github.event.comment.title }}
+          string: ${{ github.event.comment.description }}
       - name: Transition issue
         id: transition
         uses: atlassian/gajira-transition@master
