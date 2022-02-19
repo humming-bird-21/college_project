@@ -28,21 +28,21 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Find jira-issue for push
-        if: $GITHUB_EVENT_NAME == "push"
+        if: github.event == "push"
         id: jira-issue-push
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ github.event.ref }}
 
       - name: Find jira-issue for pull_request
-        if: $GITHUB_EVENT_NAME == "pull_request"
+        if: github.event == "pull_request"
         id: jira-issue-pull-request
         uses: atlassian/gajira-find-issue-key@master
         with:
           from: commits
 
       - name: on-push-transition-to-in-progress
-        if: $GITHUB_EVENT_NAME == "push"
+        if: github.event == "push"
         id: transition
         uses: atlassian/gajira-transition@master
         with:
