@@ -9,4 +9,4 @@ jobs:
         uses: atlassian/gajira-transition@master
         with:
           issue: AUTO-1
-          transition: 'To Do'
+          transition: 'TO DO'
