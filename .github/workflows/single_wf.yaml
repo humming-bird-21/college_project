@@ -18,8 +18,8 @@ jobs:
           echo $GITHUB_SHA
           echo $GITHUB_REPOSITORY
           echo $GITHUB_ACTOR
-          ${{ github.event.repository}}
-          ${{ github.event.event_name}}
+          # ${{ github.event.repository}}
+          # ${{ github.event.event_name}}
 
       - name: Login
         uses: atlassian/gajira-login@master
