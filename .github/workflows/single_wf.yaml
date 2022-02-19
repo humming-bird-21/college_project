@@ -44,7 +44,7 @@ jobs:
 
       - name: on-push-transition-to-in-progress
         if: github.event_name == 'push'
-        id: transition
+        id: on-push-transition-to-in-progress
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.jira-issue-push.outputs.issue }}
@@ -52,7 +52,7 @@ jobs:
 
       - name: on-push-transition-to-in-review
         if: github.event_name == 'pull_request'
-        id: transition
+        id: on-pull-request-transition-to-in-review
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.jira-issue-push.outputs.issue }}
