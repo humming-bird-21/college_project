@@ -40,7 +40,6 @@ jobs:
 
   pull-request-event:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
     needs: [push-event]
     steps:
       - name: Login
@@ -51,20 +50,22 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Find jira-issue for pull_request
+        if: github.event_name == 'pull_request'
         id: jira-issue-pull-request
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ github.event.pull_request.title }}
 
-      # - name: on-push-transition-to-in-review
-      #   id: on-pull-request-transition-to-in-review
-      #   uses: atlassian/gajira-transition@master
-      #   with:
-      #     issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
-      #     transition: 'In Review'
+      - name: on-push-transition-to-in-review
+        if: github.event_name == 'pull_request'
+        id: on-pull-request-transition-to-in-review
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
+          transition: 'In Review'
 
       - name: on-push-transition-to-in-review
-        if: github.event.action == 'synchronize'
+        if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
         id: on-pull-request-transition-to-in-review
         uses: atlassian/gajira-transition@master
         with:
