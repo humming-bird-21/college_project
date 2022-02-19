@@ -4,8 +4,9 @@ jobs:
   transition-jira-issue:
     runs-on: ubuntu-latest
     steps:
-      - name: jira base url
-        run: echo ${{ secrets.JIRA_BASE_URL }}
+      - name: timestamp of issue transition
+        id: timestamp
+        run: echo $(date)
       - name: Login
         uses: atlassian/gajira-login@master
         env:
@@ -16,7 +17,7 @@ jobs:
         uses: atlassian/gajira-comment@master
         with:
           issue: AUTO-1
-          comment: '${{ github.event.pusher.name }} pushed to repository: ${{ github.event.repository.full_name }} branch: ${{ github.event.repository.base }}'
+          comment: '${{ github.event.pusher.name }} pushed to repository: ${{ steps.timestamp.outputs }} ${{ github.event.repository.full_name }} branch: ${{ github.event.repository.base }}'
       - name: Transition issue
         id: transition
         uses: atlassian/gajira-transition@master
