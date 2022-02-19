@@ -35,14 +35,14 @@ jobs:
           string: ${{ github.event.ref }}
 
       - name: Find jira-issue for pull_request
-        if: github.event == "pull_request"
+        if: github.event.pull_request
         id: jira-issue-pull-request
         uses: atlassian/gajira-find-issue-key@master
         with:
           from: commits
 
       - name: on-push-transition-to-in-progress
-        if: github.event == "push"
+        if: github.event.push
         id: transition
         uses: atlassian/gajira-transition@master
         with:
