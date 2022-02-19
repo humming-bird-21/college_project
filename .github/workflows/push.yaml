@@ -1,6 +1,6 @@
 name: transition-for-branch-create
 on:
-  # create:
+  create:
   push:
 
 jobs:

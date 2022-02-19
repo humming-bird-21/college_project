@@ -1,6 +1,5 @@
 name: transition-for-branch-create
 on:
-  # create:
   pull_request:
     types: [opened, edited, reopened, synchronize]
   pull_request_review:
