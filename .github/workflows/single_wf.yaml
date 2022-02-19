@@ -8,13 +8,12 @@ on:
     types: [submitted]
 
 jobs:
-  transition-for-branch-create:
+  machine-details:
     runs-on: ubuntu-latest
     steps:
       - name: timestamp of issue transition
         id: timestamp
         run: |
-
           echo $GITHUB_SHA
           echo $GITHUB_REPOSITORY
           echo $GITHUB_EVENT_NAME
@@ -31,19 +30,15 @@ jobs:
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
+  push-event:
+    runs-on: ubuntu-latest
+    steps:
       - name: Find jira-issue for push
         if: github.event_name == 'push'
         id: jira-issue-push
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ github.event.ref }}
-
-      - name: Find jira-issue for pull_request
-        if: github.event_name == 'pull_request'
-        id: jira-issue-pull-request
-        uses: atlassian/gajira-find-issue-key@master
-        with:
-          string: ${{ github.event.pull_request.title }}
 
       - name: on-push-transition-to-in-progress
         if: github.event_name == 'push'
@@ -53,6 +48,27 @@ jobs:
           issue: ${{ steps.jira-issue-push.outputs.issue }}
           transition: 'In Progress'
 
+      - name: Comment on issue
+        if: github.event_name == 'push'
+        uses: atlassian/gajira-comment@master
+        with:
+          issue: ${{ steps.jira-issue-push.outputs.issue }}
+          comment: '${{ github.event.pusher.name }} branch created to repository: ${{steps.jira-issue-push.outputs.issue }} ${{ github.event.repository.full_name }} branch: ${{ github.event.repository.base }}'
+
+  pull-request-event:
+    runs-on: ubuntu-latest
+    steps:
+      - name: hold for push
+        needs: [push-event]
+        run: echo "hello"
+
+      - name: Find jira-issue for pull_request
+        if: github.event_name == 'pull_request'
+        id: jira-issue-pull-request
+        uses: atlassian/gajira-find-issue-key@master
+        with:
+          string: ${{ github.event.pull_request.title }}
+
       - name: on-push-transition-to-in-review
         if: github.event_name == 'pull_request'
         id: on-pull-request-transition-to-in-review
@@ -61,9 +77,10 @@ jobs:
           issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
           transition: 'In Review'
 
-      - name: Comment on issue
-        if: github.event_name == 'push'
-        uses: atlassian/gajira-comment@master
+      - name: on-push-transition-to-in-review
+        if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
+        id: on-pull-request-transition-to-in-review
+        uses: atlassian/gajira-transition@master
         with:
-          issue: ${{ steps.jira-issue-push.outputs.issue }}
-          comment: '${{ github.event.pusher.name }} branch created to repository: ${{steps.jira-issue-push.outputs.issue }} ${{ github.event.repository.full_name }} branch: ${{ github.event.repository.base }}'
+          issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
+          transition: 'In Review'
