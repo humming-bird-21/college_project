@@ -63,4 +63,4 @@ jobs:
         uses: atlassian/gajira-comment@master
         with:
           issue: ${{ steps.jira-issue-push.outputs.issue }}
-          comment: '${{ github.event.pusher.name }} branch created to repository: ${{ steps.jira-issue.outputs.issue }} ${{ github.event.repository.full_name }} branch: ${{ github.event.repository.base }}'
+          comment: '${{ github.event.pusher.name }} branch created to repository: ${{steps.jira-issue-push.outputs.issue }} ${{ github.event.repository.full_name }} branch: ${{ github.event.repository.base }}'
