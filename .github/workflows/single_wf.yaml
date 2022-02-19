@@ -36,7 +36,7 @@ jobs:
           string: ${{ github.event.ref }}
 
       - name: Find jira-issue for pull_request
-        if: github.event.pull_request
+        if: github.event_name == 'pull_request'
         id: jira-issue-pull-request
         uses: atlassian/gajira-find-issue-key@master
         with:
@@ -49,6 +49,14 @@ jobs:
         with:
           issue: ${{ steps.jira-issue-push.outputs.issue }}
           transition: 'In Progress'
+
+      - name: on-push-transition-to-in-review
+        if: github.event_name == 'pull_request'
+        id: transition
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.jira-issue-push.outputs.issue }}
+          transition: 'In Review'
 
       - name: Comment on issue
         uses: atlassian/gajira-comment@master
