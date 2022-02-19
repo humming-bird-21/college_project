@@ -12,8 +12,9 @@ jobs:
           echo ${{ github.event.repo}}
           echo ${{ github.event.repo.name}}
           echo ${{ github.event.head}}
-          echo ${{ github.event.commits[][sha] }}
-          echo ${{ github.event.commits[][message]}}
+          echo ${{ github.event}}
+          echo ${{ github.event.commits[-1][sha] }}
+          echo ${{ github.event.commits[-1][message]}}
 
       - name: Login
         uses: atlassian/gajira-login@master
