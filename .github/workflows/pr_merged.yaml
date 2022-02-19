@@ -1,0 +1,36 @@
+name: transition-for-branch-create
+on:
+  pull_request_review:
+    types: [submitted]
+jobs:
+  pull-request-review-event:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login
+        uses: atlassian/gajira-login@master
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Find jira-issue for pull_request
+        id: jira-issue-pull-request
+        uses: atlassian/gajira-find-issue-key@master
+        with:
+          string: ${{ github.event.pull_request.title }}
+
+      - name: on-push-transition-to-in-review
+        if: github.event.review.state == 'approved'
+        id: on-pull-request-approved-transition-to-in-review
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
+          transition: 'Ready for Testing'
+
+      - name: on-push-transition-to-in-review
+        if: github.event.review.state == 'merged'
+        id: on-pull-request-merged-transition-to-in-review
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
+          transition: 'Ready for Testing'
