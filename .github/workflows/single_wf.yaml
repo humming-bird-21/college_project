@@ -18,6 +18,9 @@ jobs:
           echo $GITHUB_SHA
           echo $GITHUB_REPOSITORY
           echo $GITHUB_EVENT_NAME
+          echo ${{ github.event.title }}
+          echo ${{ github.event.body }}
+          echo ${{ github.event.title }}
           # ${{ github.event.repository}}
           # ${{ github.event.event_name}}
 
