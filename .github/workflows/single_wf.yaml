@@ -8,17 +8,7 @@ on:
     types: [submitted]
 
 jobs:
-  machine-details:
-    runs-on: ubuntu-latest
-    steps:
-      - name: timestamp of issue transition
-        id: timestamp
-        run: |
-          echo $GITHUB_SHA
-          echo $GITHUB_REPOSITORY
-          echo $GITHUB_EVENT_NAME
-
-  push-event:
+  login:
     runs-on: ubuntu-latest
     steps:
       - name: Login
@@ -28,15 +18,18 @@ jobs:
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
+  push-event:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    needs: login
+    steps:
       - name: Find jira-issue for push
-        if: github.event_name == 'push'
         id: jira-issue-push
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ github.event.ref }}
 
       - name: on-push-transition-to-in-progress
-        if: github.event_name == 'push'
         id: on-push-transition-to-in-progress
         uses: atlassian/gajira-transition@master
         with:
@@ -44,7 +37,6 @@ jobs:
           transition: 'In Progress'
 
       - name: Comment on issue
-        if: github.event_name == 'push'
         uses: atlassian/gajira-comment@master
         with:
           issue: ${{ steps.jira-issue-push.outputs.issue }}
@@ -52,24 +44,16 @@ jobs:
 
   pull-request-event:
     runs-on: ubuntu-latest
-    needs: push-event
+    if: github.event_name == 'pull_request'
+    needs: [login, push-event]
     steps:
-      - name: Login
-        uses: atlassian/gajira-login@master
-        env:
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-
       - name: Find jira-issue for pull_request
-        if: github.event_name == 'pull_request'
         id: jira-issue-pull-request
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ github.event.pull_request.title }}
 
       - name: on-push-transition-to-in-review
-        if: github.event_name == 'pull_request'
         id: on-pull-request-transition-to-in-review
         uses: atlassian/gajira-transition@master
         with:
