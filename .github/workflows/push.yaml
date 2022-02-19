@@ -1,4 +1,4 @@
-name: Jira issue transition
+name: transition-for-push
 on: [push]
 jobs:
   transition-for-push:

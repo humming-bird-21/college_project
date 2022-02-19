@@ -1,4 +1,4 @@
-name: Jira issue transition
+name: transition-for-branch-create
 on: [create]
 jobs:
   transition-for-branch-create:

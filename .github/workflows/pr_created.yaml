@@ -1,4 +1,4 @@
-name: Jira issue transition
+name: transition-for-pull-request
 on: [pull_request]
 jobs:
   transition-for-pull-request:
