@@ -43,7 +43,7 @@ jobs:
         id: jira-issue-pull-request
         uses: atlassian/gajira-find-issue-key@master
         with:
-          string: ${{ github.event.title }}
+          string: ${{ github.event.pull_request.title }}
 
       - name: on-push-transition-to-in-progress
         if: github.event_name == 'push'
