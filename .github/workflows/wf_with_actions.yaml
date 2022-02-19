@@ -4,8 +4,8 @@ jobs:
   transition-jira-issue:
     runs-on: ubuntu-latest
     steps:
-      - name: transition jira issue
-        id: transition-jira
+      - name: Transition issue
+        id: transition
         uses: atlassian/gajira-transition@master
         with:
           issue: AUTO-1
