@@ -17,11 +17,11 @@ jobs:
           echo $GITHUB_SHA
           echo $GITHUB_REPOSITORY
           echo $GITHUB_EVENT_NAME
-          echo ${{ github.event.title }}
-          echo ${{ github.event.body }}
-          echo '${{ toJSON(github) }}'
-          # ${{ github.event.repository}}
-          # ${{ github.event.event_name}}
+          # echo ${{ github.event.title }}
+          # echo ${{ github.event.body }}
+          # echo '${{ toJSON(github) }}'
+          # # ${{ github.event.repository}}
+          # # ${{ github.event.event_name}}
 
       - name: Login
         uses: atlassian/gajira-login@master
