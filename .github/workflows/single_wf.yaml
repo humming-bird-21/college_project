@@ -59,7 +59,8 @@ jobs:
           transition: 'In Review'
 
       - name: Comment on issue
+        if: github.event_name == 'push'
         uses: atlassian/gajira-comment@master
         with:
-          issue: ${{ steps.jira-issue.outputs.issue }}
+          issue: ${{ steps.jira-issue-push.outputs.issue }}
           comment: '${{ github.event.pusher.name }} branch created to repository: ${{ steps.jira-issue.outputs.issue }} ${{ github.event.repository.full_name }} branch: ${{ github.event.repository.base }}'
