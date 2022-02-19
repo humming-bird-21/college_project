@@ -6,6 +6,11 @@ jobs:
     steps:
       - name: jira base url
         run: echo ${{ secrets.JIRA_BASE_URL }}
+      - name: Comment on issue
+        uses: atlassian/gajira-comment@master
+        with:
+          issue: AUTO-1
+          comment: '${{ github.event.pusher.name }} pushed to repository: ${{ github.event.repository.full_name }}'
       - name: Transition issue
         id: transition
         uses: atlassian/gajira-transition@master
