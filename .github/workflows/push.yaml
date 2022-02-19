@@ -10,7 +10,7 @@ jobs:
           echo $GITHUB_SHA
           echo $GITHUB_REPOSITORY
           echo $GITHUB_ACTOR
-          echo ${{ github.event.head}}
+          echo ${{ github.event.repo.name}}
           echo ${{ github.event}}
 
       - name: Login
