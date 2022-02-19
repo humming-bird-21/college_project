@@ -20,7 +20,7 @@ jobs:
           echo $GITHUB_EVENT_NAME
           echo ${{ github.event.title }}
           echo ${{ github.event.body }}
-          echo ${{ github.event.title }}
+          echo '${{ toJSON(github) }}'
           # ${{ github.event.repository}}
           # ${{ github.event.event_name}}
 
