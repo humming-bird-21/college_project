@@ -3,9 +3,8 @@ on:
   pull_request_review:
     types: [submitted]
 jobs:
-  pull-request-event:
+  pull-request-review-event:
     runs-on: ubuntu-latest
-    if: github.event.review.state == 'merged'
     steps:
       - name: Login
         uses: atlassian/gajira-login@master
@@ -21,7 +20,16 @@ jobs:
           string: ${{ github.event.pull_request.title }}
 
       - name: on-push-transition-to-in-review
-        id: on-pull-request-transition-to-in-review
+        if: github.event.review.state == 'approved'
+        id: on-pull-request-approved-transition-to-in-review
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
+          transition: 'Ready for Testing'
+
+      - name: on-push-transition-to-in-review
+        if: github.event.review.state == 'merged'
+        id: on-pull-request-merged-transition-to-in-review
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
