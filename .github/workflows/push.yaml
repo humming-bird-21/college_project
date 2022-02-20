@@ -31,7 +31,7 @@ jobs:
            echo $Response | jq '.fields.status.name'
 
       - name: on-push-transition-to-in-progress
-        if: ${{ steps.jira-issue-status.outputs.status }} == 'To Do'
+        if: steps.jira-issue-status.outputs.status == 'To Do'
         id: on-push-transition-to-in-progress
         uses: atlassian/gajira-transition@master
         with:
