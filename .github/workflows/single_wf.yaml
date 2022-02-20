@@ -1,4 +1,4 @@
-name: transition-for-jira-on-push-pull-request-approved-merged
+name: transition-for-jira-on-push-pull-request
 on:
   create:
   push:
