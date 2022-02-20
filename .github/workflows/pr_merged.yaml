@@ -1,9 +1,9 @@
-name: transition-for-branch-create
+name: transition-for-pr-approved-merged
 on:
   pull_request_review:
     types: [submitted]
 jobs:
-  pull-request-review-event:
+  pull-request-approved-merged:
     runs-on: ubuntu-latest
     steps:
       - name: Login
