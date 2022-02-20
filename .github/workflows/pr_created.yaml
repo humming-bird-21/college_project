@@ -1,4 +1,4 @@
-name: transition-for-branch-create
+name: transition-for-pr-created
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
@@ -6,7 +6,7 @@ on:
     types: [submitted]
 
 jobs:
-  pull-request-event:
+  pull-request-created:
     runs-on: ubuntu-latest
     steps:
       - name: Login
