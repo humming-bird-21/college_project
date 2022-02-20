@@ -1,7 +1,7 @@
 name: transition-for-pr-created
 on:
   pull_request:
-    # types: [opened, edited, reopened, synchronize]
+    types: [opened, edited, reopened, synchronize, closed]
   pull_request_review:
     types: [submitted]
 
@@ -34,7 +34,7 @@ jobs:
           issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
           transition: 'In Review'
 
-      - name: on-push-transition-to-in-review
+      - name: on-pull-request-approved-transition-to-in-review
         if: github.event.review.state == 'approved'
         id: on-pull-request-approved-transition-to-in-review
         uses: atlassian/gajira-transition@master
@@ -42,9 +42,9 @@ jobs:
           issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
           transition: 'Ready for Testing'
 
-      - name: on-push-transition-to-in-review
-        if: github.event.review.state == 'merged'
-        id: on-pull-request-merged-transition-to-in-review
+      - name: on-merged-transition-to-ready-to-test
+        if: github.event.pull_request.merged == true
+        id: on-merged-transition-to-ready-to-test
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
