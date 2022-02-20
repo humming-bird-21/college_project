@@ -27,9 +27,9 @@ jobs:
         run: |
           reference=''
           if [[ ${{ github.event_name }} == 'push' ]];then
-              reference=${{ github.event.ref }}
+              reference="${{ github.event.ref }}"
           else
-              reference=${{ github.event.pull_request.title }}
+              reference="${{ github.event.pull_request.title }}"
           fi
           echo "##[set-output name=ref;]$(echo $reference)"
           echo $reference
