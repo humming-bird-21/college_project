@@ -20,7 +20,18 @@ jobs:
         with:
           string: ${{ github.event.ref }}
 
+      - name: Get Issue Status
+        id: jira-issue-status
+        shell: bash
+        run: |
+          Response=$(curl --location --request GET "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ steps.jira-issue-push.outputs.issue }}?fields=status" \
+          --header 'Accept: application/json' \
+          --user '${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}' )
+           echo "##[set-output name=status;]$(echo $Response | jq '.fields.status.name'|sed 's/"/'/g)"
+           echo $Response | jq '.fields.status.name'
+
       - name: on-push-transition-to-in-progress
+        if: steps.jira-issue-status.outputs.status == 'To Do'
         id: on-push-transition-to-in-progress
         uses: atlassian/gajira-transition@master
         with:
@@ -31,4 +42,4 @@ jobs:
         uses: atlassian/gajira-comment@master
         with:
           issue: ${{ steps.jira-issue-push.outputs.issue }}
-          comment: '${{ github.event.pusher.name }} branch created to repository: ${{steps.jira-issue-push.outputs.issue }} ${{ github.event.repository.full_name }} branch: ${{ github.event.repository.base }}'
+          comment: '${{ github.event.pusher.name }} branch created to repository: ${{steps.jira-issue-push.outputs.issue }} ${{ steps.jira-issue-status.outputs.status }} branch: ${{ github.event.repository.base }}'
