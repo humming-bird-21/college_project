@@ -1,7 +1,7 @@
 name: transition-for-pr-created
 on:
   pull_request:
-    types: [opened, edited, reopened, synchronize]
+    # types: [opened, edited, reopened, synchronize]
   pull_request_review:
     types: [submitted]
 
