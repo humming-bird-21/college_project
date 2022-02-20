@@ -15,7 +15,7 @@ jobs:
         run: echo '${{ toJSON(github) }}'
 
       - name: Login
-        uses: atlassian/gajira-login@master
+        uses: atlassian/gajira-login@v2.0.0
         env:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
@@ -36,7 +36,7 @@ jobs:
 
       - name: get-jira-key
         id: get-jira-key
-        uses: atlassian/gajira-find-issue-key@master
+        uses: atlassian/gajira-find-issue-key@v2.0.2
         with:
           string: ${{ steps.jira-reference.outputs.ref }}
 
@@ -53,7 +53,7 @@ jobs:
       - name: on-push-transition-to-in-progress
         if: github.event_name == 'push' && steps.jira-issue-status.outputs.status == 'To Do'
         id: on-push-transition-to-in-progress
-        uses: atlassian/gajira-transition@master
+        uses: atlassian/gajira-transition@v2.0.2
         with:
           issue: ${{ steps.get-jira-key.outputs.issue }}
           transition: 'In Progress'
@@ -61,7 +61,7 @@ jobs:
       - name: on-push-transition-to-in-review
         if: github.event_name == 'pull_request'
         id: on-pull-request-transition-to-in-review
-        uses: atlassian/gajira-transition@master
+        uses: atlassian/gajira-transition@v2.0.2
         with:
           issue: ${{ steps.get-jira-key.outputs.issue }}
           transition: 'In Review'
@@ -69,7 +69,7 @@ jobs:
       - name: on-pull-request-approved-transition-to-in-review
         if: github.event_name == 'pull_request' && github.event.review.state == 'approved'
         id: on-pull-request-approved-transition-to-in-review
-        uses: atlassian/gajira-transition@master
+        uses: atlassian/gajira-transition@v2.0.2
         with:
           issue: ${{ steps.get-jira-key.outputs.issue }}
           transition: 'Ready for Testing'
@@ -77,13 +77,13 @@ jobs:
       - name: on-merged-transition-to-ready-to-test
         if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
         id: on-merged-transition-to-ready-to-test
-        uses: atlassian/gajira-transition@master
+        uses: atlassian/gajira-transition@v2.0.2
         with:
           issue: ${{ steps.get-jira-key.outputs.issue }}
           transition: 'Ready for Testing'
 
       - name: comment-to-jira-ticket
-        uses: atlassian/gajira-comment@master
+        uses: atlassian/gajira-comment@v2.0.2
         with:
           issue: ${{ steps.get-jira-key.outputs.issue }}
           comment: '${{ github.event.pusher.name }} branch created to repository: ${{steps.get-jira-key.outputs.issue }} ${{ steps.jira-issue-status.outputs.status }} branch: ${{ github.event.repository.base }}'
