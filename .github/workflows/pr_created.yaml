@@ -2,13 +2,16 @@ name: transition-for-pr-created
 on:
   pull_request:
     types: [opened, edited, reopened, synchronize]
-  # pull_request_review:
-  #   types: [submitted]
+  pull_request_review:
+    types: [submitted]
 
 jobs:
   pull-request-created:
     runs-on: ubuntu-latest
     steps:
+      - name: details
+        run: echo '${{ toJSON(github) }}'
+
       - name: Login
         uses: atlassian/gajira-login@master
         env:
@@ -31,6 +34,21 @@ jobs:
           issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
           transition: 'In Review'
 
+      - name: on-push-transition-to-in-review
+        if: github.event.review.state == 'approved'
+        id: on-pull-request-approved-transition-to-in-review
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
+          transition: 'Ready for Testing'
+
+      - name: on-push-transition-to-in-review
+        if: github.event.review.state == 'merged'
+        id: on-pull-request-merged-transition-to-in-review
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.jira-issue-pull-request.outputs.issue }}
+          transition: 'Ready for Testing'
       # - name: on-push-transition-to-in-review
       #   if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
       #   id: on-pull-request-synchronize-transition-to-in-review
