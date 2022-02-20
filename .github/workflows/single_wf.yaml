@@ -1,0 +1,89 @@
+name: transition-for-jira-on-push-pull-request
+on:
+  create:
+  push:
+  pull_request:
+    types: [opened, edited, reopened, synchronize, closed]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  push-pull-event:
+    runs-on: ubuntu-latest
+    steps:
+      - name: details
+        run: echo '${{ toJSON(github) }}'
+
+      - name: Login
+        uses: atlassian/gajira-login@master
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: jira-reference
+        id: jira-reference
+        shell: bash
+        run: |
+          reference=''
+          if [[ ${{ github.event_name }} == 'push' ]];then
+              reference=${{ github.event.ref }}
+          else
+              reference=${{ github.event.pull_request.title }}
+          fi
+          echo "##[set-output name=ref;]$(echo $reference)"
+          echo $reference
+
+      - name: get-jira-key
+        id: get-jira-key
+        uses: atlassian/gajira-find-issue-key@master
+        with:
+          string: ${{ steps.jira-reference.outputs.ref }}
+
+      - name: jira-issue-status
+        id: jira-issue-status
+        shell: bash
+        run: |
+          Response=$(curl --location --request GET "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ steps.get-jira-key.outputs.issue }}?fields=status" \
+          --header 'Accept: application/json' \
+          --user '${{ secrets.JIRA_USER_EMAIL }}:${{ secrets.JIRA_API_TOKEN }}' )
+           echo "##[set-output name=status;]$(echo $Response | jq '.fields.status.name'|sed 's/"/'/g)"
+           echo $Response | jq '.fields.status.name'
+
+      - name: on-push-transition-to-in-progress
+        if: github.event_name == 'push' && steps.jira-issue-status.outputs.status == 'To Do'
+        id: on-push-transition-to-in-progress
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.get-jira-key.outputs.issue }}
+          transition: 'In Progress'
+
+      - name: on-push-transition-to-in-review
+        if: github.event_name == 'pull_request'
+        id: on-pull-request-transition-to-in-review
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.get-jira-key.outputs.issue }}
+          transition: 'In Review'
+
+      - name: on-pull-request-approved-transition-to-in-review
+        if: github.event_name == 'pull_request' && github.event.review.state == 'approved'
+        id: on-pull-request-approved-transition-to-in-review
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.get-jira-key.outputs.issue }}
+          transition: 'Ready for Testing'
+
+      - name: on-merged-transition-to-ready-to-test
+        if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+        id: on-merged-transition-to-ready-to-test
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.get-jira-key.outputs.issue }}
+          transition: 'Ready for Testing'
+
+      - name: comment-to-jira-ticket
+        uses: atlassian/gajira-comment@master
+        with:
+          issue: ${{ steps.get-jira-key.outputs.issue }}
+          comment: '${{ github.event.pusher.name }} branch created to repository: ${{steps.get-jira-key.outputs.issue }} ${{ steps.jira-issue-status.outputs.status }} branch: ${{ github.event.repository.base }}'
