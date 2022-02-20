@@ -28,7 +28,8 @@ jobs:
         run: |
           is_release_branch=false
           branch=${{ github.base_ref }}
-          if [[ echo $branch | grep -Eq 'gh_action.*' ]];then
+          if echo $branch | grep -Eq 'gh_action.*'
+          then
               is_release_branch=true
           fi
           echo "##[set-output name=is_release_branch;]$(echo $is_release_branch)"
