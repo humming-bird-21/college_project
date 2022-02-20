@@ -28,7 +28,7 @@ jobs:
           --header 'Accept: application/json' \
           --header "Authorization: ${{ secrets.JIRA_API_TOKEN }}" )
            echo "##[set-output name=status;]$(echo $Response | jq '.fields.status.name')"
-           echo echo '${{ toJSON(Response) }}'
+           echo `toJSON($Response)`
            echo $Response | jq '.fields.status.name'
 
       - name: on-push-transition-to-in-progress
