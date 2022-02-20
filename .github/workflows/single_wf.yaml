@@ -26,7 +26,7 @@ jobs:
         shell: bash
         run: |
           reference=''
-          if [[ $ {{ github.event_name }} == 'push' ]];then
+          if [[ ${{ github.event_name }} == 'push' ]];then
               reference=${{ github.event.ref }}
           else
               reference=${{ github.event.pull_request.title }}
