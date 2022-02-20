@@ -26,7 +26,7 @@ jobs:
         run: |
           Response=$(curl --location --request GET "${{ secrets.JIRA_BASE_URL }}/rest/api/3/issue/${{ steps.jira-issue-push.outputs.issue }}?fields=status" \
           --header 'Accept: application/json' \
-          --header "Authorization: ${{ inputs.jira-token }}" )
+          --header "Authorization: ${{ secrets.JIRA_API_TOKEN }}" )
            echo "##[set-output name=status;]$(echo $Response | jq '.fields.status.name')"
            echo $Response | jq '.fields.status.name'
 
